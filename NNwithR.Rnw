@@ -1,0 +1,178 @@
+\documentclass{tufte-book}
+\usepackage{graphicx}  % werken met figuren
+\usepackage{gensymb} % werken met wetenschappelijke eenheden\usepackage{geometry}
+\usepackage{changepage} % http://ctan.org/pkg/changepage
+\usepackage[dutch,british]{babel} % instelling van de taal (woordsplitsing, spellingscontrole)
+\usepackage[parfill]{parskip} % Paragrafen gescheiden door witte lijn en geen inspringing
+\usepackage[font=small,skip=3pt]{caption} % Minder ruimte tussen figuur/table en ondertitel. Ondertitel klein
+\usepackage{capt-of}
+\usepackage{indentfirst}
+\setlength{\parindent}{0.7cm}
+\usepackage{enumitem} % Laat enumerate werken met letters
+\usepackage{url}
+\usepackage{lipsum}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+% Prints a trailing space in a smart way.
+\usepackage{xspace}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+% Alter some LaTeX defaults for better treatment of figures:
+% See p.105 of "TeX Unbound" for suggested values.
+% See pp. 199-200 of Lamport's "LaTeX" book for details.
+%   General parameters, for ALL pages:
+    \renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+    \renewcommand{\bottomfraction}{0.9}	% max fraction of floats at bottom
+%   Parameters for TEXT pages (not float pages):
+    \setcounter{topnumber}{2}
+    \setcounter{bottomnumber}{2}
+    \setcounter{totalnumber}{4}     % 2 may work better
+    \renewcommand{\textfraction}{0.1}	% allow minimal text w. figs
+%   Parameters for FLOAT pages (not text pages):
+    \renewcommand{\floatpagefraction}{0.8}	% require fuller float pages
+% N.B.: floatpagefraction MUST be less than topfraction !!
+\setcounter{secnumdepth}{3}
+
+\newcommand{\tthdump}[1]{#1}
+
+\newcommand{\openepigraph}[2]{
+  \begin{fullwidth}
+  \sffamily\large
+    \begin{doublespace}
+      \noindent\allcaps{#1}\\ % epigraph
+      \noindent\allcaps{#2} % author
+    \end{doublespace}
+  \end{fullwidth}
+}
+
+
+\usepackage{makeidx}
+\makeindex
+
+\title{Neural Networks with R}
+\author{Jan Trommelmans}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE,prefix.string=NNR}
+\setkeys{Gin}{width=1.1\marginparwidth} %% Sweave
+
+<<echo=FALSE>>=
+library(tidyverse)
+library(neuralnet)
+library(devtools)
+@
+
+% Setting the ggplot theme:
+<<echo=FALSE>>=
+JT.theme <- theme(panel.border = element_rect(fill = NA, colour = "gray10"),
+                  panel.background = element_blank(),
+                  panel.grid.major = element_line(colour = "gray85"),
+                  panel.grid.minor = element_line(colour = "gray85"),
+                  panel.grid.major.x = element_line(colour = "gray85"),
+                  axis.text = element_text(size = 9 , face = "bold"),
+                  axis.title = element_text(size = 10 , face = "bold"),
+                  plot.title = element_text(size = 12 , face = "bold"),
+                  strip.text = element_text(size = 9 , face = "bold"),
+                  strip.background = element_rect(colour = "black"),
+                  legend.text = element_text(size = 9),
+                  legend.title = element_text(size = 10 , face = "bold"),
+                  legend.background = element_rect(fill = "white"),
+                  legend.key = element_rect(fill = "white"))
+@
+
+% Functions
+
+\mainmatter
+
+\chapter{Neural Networks with R}
+\sidenote{''Neural Networks with R"; Giuseppe Ciaburro, Balaji Venkatswaran; Packt>, 2017}
+\section{Chapter 1: Training a neural network to square a number.}
+\subsection{Exercise 1}
+\newthought{Reading the data}
+<<>>=
+# Reading the data
+mydata <- read.csv("Data/squares.csv", sep=";", header=TRUE)
+mydata
+attach(mydata)
+names(mydata)
+@
+
+\newthought{Constructing the model}
+
+Because the model starts with a random choice of the weights and the biases, we will get another solution each time we use ''neuralnet" to determine the model parameters. Therefor we need to work with a seed for the random functions.
+<<label=model,fig=TRUE, include=FALSE, echo=FALSE>>=
+# Train the model based on output from input
+set.seed(2018) 
+model <- neuralnet(formula=OUTPUT~INPUT,
+                   data=mydata,
+                   hidden=10,
+                   threshold=0.01)
+print(model)
+# Load a better plotting function
+source_url('https://gist.githubusercontent.com/fawda123/7471137/raw/466c1474d0a505ff044412703516c34f1a4684a5/nnet_plot_update.r')
+plot.nnet(model)
+@
+
+\begin{figure*}
+\includegraphics[width=0.8\textwidth]{NNR-model}
+\caption{Plot of neural network model}
+\label{fig:model}
+\setfloatalignment{b}% forces caption to be bottom-aligned
+\end{figure*}
+
+The modelparameters are 
+\begin{itemize}
+  \item $B_{1,i}$: the biases for each hidden layer
+  \item $win_{i}$: the weights for the inputs
+  \item $whid_{i}$: the weights for the hidden layers
+  \item $B_{2}$: the bias for the output
+\end{itemize}
+
+<<>>=
+resultaat <- data.frame(win=model$result.matrix[seq(5,23,by=2)], B1=model$result.matrix[seq(4, 22, by=2)], whid=model$result.matrix[25:34])
+B2 <- model$result.matrix[24]
+resultaat
+B2
+@
+
+\newthought{Comparing actual output and predicted output}
+
+<<>>=
+final_output <- cbind(INPUT, OUTPUT, as.data.frame(model$net.result))
+colnames(final_output) <- c("Input","Expected Output","Neural Net Output")
+print(final_output)
+@
+
+\newthought{Using the model for prediction}
+
+<<>>=
+test <- data.frame(x=seq(1.5, 9.5, by=1), xsq=seq(1.5, 9.5, by=1)^2, xmod=compute(model, seq(1.5, 9.5, by=1))$net.result)
+test$error <- test$xsq - test$xmod
+test
+@
+
+<<label=test,fig=TRUE, include=FALSE, echo=FALSE>>=
+ggplot(data=test, aes(x=x)) + 
+  geom_line(aes(y=xsq)) + 
+  geom_point(aes(y=xmod), color="red") + 
+  JT.theme
+@
+
+\begin{marginfigure}[-4cm]
+\includegraphics[width=1\textwidth]{NNR-test}
+\caption{Using the neural network model}
+\label{fig:test}
+\setfloatalignment{b}% forces caption to be bottom-aligned
+\end{marginfigure}
+
+\newpage
+\textbf{Thanks} \\
+\medskip
+R Core Team (2018). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+\medskip
+<<>>=
+sessionInfo()
+@
+\end{document}
