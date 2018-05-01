@@ -62,6 +62,8 @@
 library(tidyverse)
 library(neuralnet)
 library(devtools)
+library(NeuralNetTools)
+library(nnet)
 @
 
 % Setting the ggplot theme:
@@ -166,6 +168,56 @@ ggplot(data=test, aes(x=x)) +
 \label{fig:test}
 \setfloatalignment{b}% forces caption to be bottom-aligned
 \end{marginfigure}
+\newpage
+\subsection{Exercise 2}
+
+Creating a model with 3 continuous inputs and one binary output.
+
+\newthought{Reading the data}
+<<>>=
+mydata <- read.csv("Data/tip.csv", sep=";", header=TRUE)
+attach(mydata)
+names(mydata)
+@
+
+\newthought{Train the model using nnet}
+<<>>=
+model <- nnet(CustomerWillTip ~ Service + Ambience + Food,
+              data=mydata,
+              size=5,
+              rang=0.1,
+              decay=0.05,
+              maxit=5000)
+print(model)
+garson(model)
+@
+
+\newthought{Plot the model}
+<<label=model_tip,fig=TRUE, include=FALSE, echo=FALSE>>=
+plotnet(model)
+@
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{NNR-model_tip}
+\caption{Layout of model Tip}
+\label{fig:model_tip}
+\setfloatalignment{b}% forces caption to be bottom-aligned
+\end{figure}
+
+\newthought{Relative importance of the input variables}
+<<label=garson_tip,fig=TRUE, include=FALSE, echo=FALSE>>=
+garson(model)
+@
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{NNR-garson_tip}
+\caption{Relative importance of input variables}
+\label{fig:garson_tip}
+\setfloatalignment{b}% forces caption to be bottom-aligned
+\end{figure}
+
 
 \newpage
 \textbf{Thanks} \\
