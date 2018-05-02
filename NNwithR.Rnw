@@ -90,8 +90,8 @@ JT.theme <- theme(panel.border = element_rect(fill = NA, colour = "gray10"),
 
 \chapter{Neural Networks with R}
 \sidenote{''Neural Networks with R"; Giuseppe Ciaburro, Balaji Venkatswaran; Packt>, 2017}
-\section{Chapter 1: Training a neural network to square a number.}
-\subsection{Exercise 1}
+\section{Neural Networks and Artificial Intelligence Concepts}
+\subsection{Training a neural network to square a number}
 \newthought{Reading the data}
 <<>>=
 # Reading the data
@@ -168,10 +168,9 @@ ggplot(data=test, aes(x=x)) +
 \label{fig:test}
 \setfloatalignment{b}% forces caption to be bottom-aligned
 \end{marginfigure}
-\newpage
-\subsection{Exercise 2}
 
-Creating a model with 3 continuous inputs and one binary output.
+\newpage
+\subsection{Creating a model with 3 continuous inputs and one binary output}
 
 \newthought{Reading the data}
 <<>>=
@@ -218,7 +217,51 @@ garson(model)
 \setfloatalignment{b}% forces caption to be bottom-aligned
 \end{figure}
 
+\section{Learning processes in Neural Networks}
 
+Learning =
+
+\begin{itemize}
+  \item training phase: fitting the model parameters
+  \item testing phase: assess the performance of the trained neural network
+  \item deployment phase: actual data is given as input and the model makes predictions
+\end{itemize}
+
+\subsection{What is machine learning?}
+The model is human learning: first aided training how to do a task, than doing it on your own. The learning process is never over, because we adapt our model based on new inputs. Machine learning is not the same as \emph{programming}. Programming means giving a machine a set of instructions. In machine learning the only input is data, and the model will adapt to it. The algorithm that we use is based on the characteristics of the data: the features of the independent variables, the type of the dependent variable(s), de accuracy of the model and eht speed of training the model and predicting with the model.
+
+The features of the independent variables will determine how we will train the model:
+\begin{enumerate}
+  \item Supervised learning: there is a target e.g. an error term that has to be minimised
+  \item Unsupervised learning: there is no specific target. The algorithm needs to find something using the data
+  \item Reinforcement learning: there is constant feedback in the learning process and the algorithm adapts based on the environment
+\end{enumerate}
+
+\subsection{Supervised learning}
+\emph{Supervised learning} is a method where part of the training data acts as a teacher to the algorithm to determine the model. The machine is taught what to learn form the target data. The target data are known in advance. For neural networks the values of the independent variables and the response variables must be numeric. If not a conversion is needed. Once the model is constructed based on the training data, it can be used to predict outcomes from new input data.
+
+\subsection{Unsupervised learning}
+\emph{Unsupervised learning} is also called \emph{Self Organizing Map (SOM)}: the input data are organised into another set fo data without the need of a target variable. It tries to find patterns in the input data and group them into clusters. When the model is given new input data it will reorganise these data into these different groups/clusters. Typical techniques used in unsupervised learning are:
+\begin{itemize}
+  \item clustering (K-means, hierarchical)
+  \item association techniques
+  \item dimensionality reduction
+  \item Kohonen networks
+\end{itemize}
+
+Neural networks can do supervised and unsupervised learning.
+
+\subsection{Reinforcement learning}
+\emph{Reinforcement learning} requires a constant feedback system. It can be done with a special type of neural network (Q-learning), but this falls outside the scope of this book.
+
+\subsection{Training and Testing a model}
+We split the data set into a \emph{training set} (e.g. 70\% of the data) and a \emph{testing set} (e.g. 30\% of the data set). The allocation is done radomly to reduce bias. 
+
+The training set is fed into the neural network that will determine the weights, biases and activation function to be used the obtain the output. The target is to minimise the error between the calculated output and the, known, output data.
+
+When sufficient convergence is achieved, we feed the test data to the model and we compare the predicted outcomes with the, known, outcomes of the test data. This will lead to a \emph{confusion matrix} that we can use to evaluate the quality of the model.
+
+Deployment means that we use the model to predict the outcome based on new input data, of which the outcome is not known.
 \newpage
 \textbf{Thanks} \\
 \medskip
