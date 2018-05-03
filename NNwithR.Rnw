@@ -262,6 +262,31 @@ The training set is fed into the neural network that will determine the weights,
 When sufficient convergence is achieved, we feed the test data to the model and we compare the predicted outcomes with the, known, outcomes of the test data. This will lead to a \emph{confusion matrix} that we can use to evaluate the quality of the model.
 
 Deployment means that we use the model to predict the outcome based on new input data, of which the outcome is not known.
+
+\subsection{Evaluation metrix: the confusion matrix}
+
+For a binary classification problem the results of checking the predicted values vs the actual values can be summarised in a \emph{confusion matrix}.
+
+\begin{tabular}{ c || c | c }
+  \textbf{Confusion Matrix} & Actual=TRUE & Actual=FALSE \\
+  \hline \\
+  Predicted=TRUE & True Positive = TP & False Positive = FP \\
+  \hline \\
+  Predicted=FALSE & False Negative = FN & True Negative = TN \\
+\end{tabular}
+
+\newpage
+From this we can calculate the following ratios:
+\begin{itemize}
+  \item True Positive Ratio = TPR = $\frac{TP}{TP+FN}$ (Sensitivity, Recall)
+  \item True Negative Ratio = TNR = $\frac{TN}{TN+FP}$ (Specificity)
+  \item Accuracy = ACC = $\frac{TP+TN}{TP+FP+TN+FN}$
+  \item Precision = PRE = $\frac{TP}{TP+FP}$
+  \item Recall = REC = $\frac{TP}{TP+FN}$ = TPR
+  \item F-score = $2\frac{PRE*REC}{PREC+REC}$
+\end{itemize}
+
+A graphical representation of the predictive ability of a binary classifier model is a graph of TPR vs FPR. This is called the \emph{Receiver Operating Characteristic (ROC)}. It is a graph of Sensitivity vs (1-Specficity).
 \newpage
 \textbf{Thanks} \\
 \medskip
