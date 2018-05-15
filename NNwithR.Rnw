@@ -103,7 +103,7 @@ names(mydata)
 
 \newthought{Constructing the model}
 
-Because the model starts with a random choice of the weights and the biases, we will get another solution each time we use ''neuralnet" to determine the model parameters. Therefor we need to work with a seed for the random functions.
+Because the model starts with a random choice of the weights and the biases, we will get another solution every time we use ''neuralnet" to determine the model parameters. Therefor we need to work with a seed for the random functions.
 <<label=model,fig=TRUE, include=FALSE, echo=FALSE>>=
 # Train the model based on output from input
 set.seed(2018) 
@@ -124,7 +124,10 @@ plot.nnet(model)
 \setfloatalignment{b}% forces caption to be bottom-aligned
 \end{figure*}
 
-The modelparameters are 
+\medskip
+What we can read from the summary of this model are:
+
+\newthought{the modelparamters}
 \begin{itemize}
   \item $B_{1,i}$: the biases for each hidden layer
   \item $win_{i}$: the weights for the inputs
@@ -132,6 +135,43 @@ The modelparameters are
   \item $B_{2}$: the bias for the output
 \end{itemize}
 
+\newthought{the activation function that is used}. 
+The activation function is:
+\begin{equation}
+act.fct(x)=\frac{1}{1+e^{-x}}
+\end{equation}
+
+The input of node $i$ is:
+\begin{equation}
+Hin_{i}=B_{1,i} + win_{i}x
+\end{equation}
+
+The output of node $i$ is:
+\begin{equation}
+Hout_{i}=act.fct(Hin_{i})=\frac{1}{1+e^{-Hin{i}}}=\frac{1}{1+e^{-(B_{1,i} + win_{i}x)}}
+\end{equation}
+
+\newthought{the error function that is used}.
+The error function is:
+\begin{equation}
+Err(x)=\frac{1}{2} \left(y-x  \right)^{2}
+\end{equation}
+
+The input of the output node $O$ is:
+\begin{equation}
+Oin=B_{2}+ \sum_{i=1}^{i=10} whid_{i}Hout_{i}
+\end{equation}
+
+The output of output node $O$ is:
+\begin{equation}
+Oout=act.fct(Oin)=\frac{1}{1+e^{-Oin}}=\frac{1}{1+e^{-(B_{2}+ \sum_{i=1}^{i=10} whid_{i}Hout_{i})}}
+\end{equation}
+
+The error is the difference between the true value $y$ and the calculated value $Oout$. For the error function we take the square of the difference. The factor $\frac{1}{2}$ is added because it neutralises the exponent (2) when we take the derivative.
+
+\begin{equation}
+Err(x)=\frac{1}{2} \left(y-x  \right)^{2}=\frac{1}{2} \left(y-Oout  \right)^{2} =\frac{1}{2} \left(y-\frac{1}{1+e^{-(B_{2}+ \sum_{i=1}^{i=10} whid_{i}Hout_{i})}}  \right)^{2}
+\end{equation}
 <<>>=
 resultaat <- data.frame(win=model$result.matrix[seq(5,23,by=2)], B1=model$result.matrix[seq(4, 22, by=2)], whid=model$result.matrix[25:34])
 B2 <- model$result.matrix[24]
